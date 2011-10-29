@@ -38,16 +38,16 @@ module KeywordExtraction
     def calculate_most_important_words(words, count = 5)
       cooccurrences = calculate_cooccurences(words)
       
-      stems = Set.new
+      word_list = Set.new
       cooccurrences.each do |cooccurrence, count|
-        stems << cooccurrence.first.stemmed
-        stems << cooccurrence.last.stemmed
+        word_list << cooccurrence.first
+        word_list << cooccurrence.last
       end
-      stems = stems.to_a
+      word_list = word_list.to_a
       
-      graph = Graph.new(stems.count, false)
-      stems.each_with_index do |stem, index|
-        graph.label(index, stem)
+      graph = Graph.new(word_list.count, false)
+      word_list.each_with_index do |word, index|
+        graph.label(index, word.stemmed)
       end
       
       cooccurrences.each do |cooccurrence, count|
@@ -57,8 +57,11 @@ module KeywordExtraction
       lmi_graph = graph.to_lmi_graph
       ranks     = PageRank.calculate(lmi_graph, count)
       
-      ranked_stems = stems.zip(ranks).sort { |a,b| (a.last <=> b.last) * -1 }.map { |word, rank| "#{word} (#{rank})"}
-      ranked_stems[0 ... count]
+      word_list.each_with_index do |word, index|
+        word.rank = ranks[index]
+      end
+      
+      word_list.sort { |a, b| (a.rank <=> b.rank) * -1 }[0 ... count]
     end
 
     private

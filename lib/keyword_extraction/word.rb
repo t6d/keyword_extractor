@@ -5,6 +5,7 @@ module KeywordExtraction
     attr_accessor :inflected
     attr_accessor :pos_tag
     attr_accessor :stemmed
+    attr_accessor :rank
 
     def self.from_string(string, separator = "/")
       return nil if string.strip.empty?
