@@ -22,11 +22,14 @@ module KeywordExtraction
     def calculate_cooccurences(words)
       cooccurences = Hash.new(0)
 
-      ngrams(words, 3) do |ngram|
+      ngrams(words, 4) do |ngram|
         [
           [ngram[0], ngram[1]].sort,
           [ngram[0], ngram[2]].sort,
-          [ngram[1], ngram[2]].sort
+          [ngram[0], ngram[3]].sort,
+          [ngram[1], ngram[2]].sort,
+          [ngram[1], ngram[3]].sort,
+          [ngram[2], ngram[3]].sort
         ].uniq.each do |cooccurence|
           cooccurences[cooccurence] += 1
         end
@@ -37,6 +40,10 @@ module KeywordExtraction
     
     def calculate_most_important_words(words, count = 5)
       cooccurrences = calculate_cooccurences(words)
+      
+      cooccurrences.delete_if do |cooccurrence| 
+        not (cooccurrence.first.noun_or_adjective? and cooccurrence.last.noun_or_adjective?)
+      end
       
       word_list = Set.new
       cooccurrences.each do |cooccurrence, count|
@@ -62,6 +69,16 @@ module KeywordExtraction
       end
       
       word_list.sort { |a, b| (a.rank <=> b.rank) * -1 }[0 ... count]
+    end
+    
+    def extract_most_important_words(text, count = 5)
+      tagger = EngTagger.new
+      
+      words = tagger.get_readable(text).split(' ').map do |w|
+        KeywordExtraction::Word.from_string(w)
+      end
+      
+      calculate_most_important_words(words, count)
     end
 
     private

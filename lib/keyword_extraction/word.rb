@@ -32,7 +32,19 @@ module KeywordExtraction
     def hash
       self.stemmed.hash
     end
-
+    
+    def noun?
+      !!(self.pos_tag =~ /NN.*/)
+    end
+    
+    def adjective?
+      !!(self.pos_tag =~ /JJ.*/)
+    end
+    
+    def noun_or_adjective?
+      noun? or adjective?
+    end
+    
     def inspect
       "Word(#{inflected}, #{pos_tag}, #{stemmed})"
     end
