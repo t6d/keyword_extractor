@@ -58,9 +58,4 @@ to do with the weather." The protesters seem determined to prove Hizzhonor
 wrong.
 }
 
-tagger = EngTagger.new
-words = tagger.get_readable(text).split(' ').select { |w| w =~ /\/(NN.*)|(JJ.*)$/ }.map do |w|
-  KeywordExtraction::Word.from_string(w)
-end
-
-puts KeywordExtraction.calculate_most_important_words(words)
+puts KeywordExtraction.extract_most_important_words(text, 5).map { |w| "#{w} #{w.rank}"}
