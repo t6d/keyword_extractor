@@ -58,4 +58,4 @@ to do with the weather." The protesters seem determined to prove Hizzhonor
 wrong.
 }
 
-puts KeywordExtraction.extract_most_important_words(text, 5).map { |w| "#{w} #{w.rank}"}
+puts KeywordExtractor.extract_most_important_words(text, 5).map { |w| "#{w} #{w.rank}"}

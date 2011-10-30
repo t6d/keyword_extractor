@@ -1,4 +1,4 @@
-module KeywordExtraction
+module KeywordExtractor
   class Graph
 
     attr_reader :adjacency_matrix

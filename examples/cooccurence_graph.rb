@@ -7,4 +7,4 @@ place in the warmth of New York's Indian summer. But winter has been looming,
 and on Saturday, just a couple days before Halloween, the protesters got a
 preview of what they're in for.}
 
-puts KeywordExtraction.print_cooccurrence_graph(text)
+puts KeywordExtractor.print_cooccurrence_graph(text)

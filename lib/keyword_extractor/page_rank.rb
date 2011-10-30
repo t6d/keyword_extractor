@@ -1,4 +1,4 @@
-module KeywordExtraction
+module KeywordExtractor
   class PageRank
 
     def self.calculate(graph, iterations = 100, damping_factor = 0.85, initial_rank = 0.25)

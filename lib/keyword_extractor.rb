@@ -6,12 +6,12 @@ require 'core_ext/matrix'
 require 'engtagger'
 require 'stemmer'
 
-require 'keyword_extraction/word'
-require 'keyword_extraction/graph'
-require 'keyword_extraction/graph_printer'
-require 'keyword_extraction/page_rank'
+require 'keyword_extractor/word'
+require 'keyword_extractor/graph'
+require 'keyword_extractor/graph_printer'
+require 'keyword_extractor/page_rank'
 
-module KeywordExtraction
+module KeywordExtractor
   class << self
 
     def calculate_word_frequencies(words)
@@ -124,7 +124,7 @@ module KeywordExtraction
         tagger = EngTagger.new
 
         tagger.get_readable(text).split(' ').map do |w|
-          KeywordExtraction::Word.from_string(w)
+          Word.from_string(w)
         end
       end
       

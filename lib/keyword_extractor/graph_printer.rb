@@ -1,4 +1,4 @@
-module KeywordExtraction
+module KeywordExtractor
   class GraphPrinter
 
     attr_reader :graph
