@@ -1,5 +1,3 @@
-require 'bundler/setup'
-
 require 'matrix'
 require 'core_ext/matrix'
 
