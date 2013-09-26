@@ -4,16 +4,19 @@ module KeywordExtractor
     attr_reader :adjacency_matrix
 
     def self.from_matrix(matrix, directed = true)
-      raise ArgumentError, "Expected a matrix" unless
-      matrix.kind_of?(Matrix)
-
-      raise ArgumentError, "Expected a quadratic matrix" unless
-      matrix.row_size == matrix.column_size
+      raise ArgumentError, "Expected a matrix" unless matrix.kind_of?(Matrix)
+      raise ArgumentError, "Expected a quadratic matrix" unless matrix.row_size == matrix.column_size
 
       graph = new(matrix.row_size, directed)
       matrix.each_with_index do |value, row, column|
         graph[row, column] = value
       end
+      graph
+    end
+
+    def self.from_labels(labels, directed = true)
+      graph = new(labels.count, directed)
+      labels.each_with_index { |label, index| graph.label(index, label) }
       graph
     end
 
@@ -24,38 +27,35 @@ module KeywordExtractor
     end
 
     def []=(row, col, value)
-      row = determine_index_for_label(row) if row.kind_of?(String)
-      col = determine_index_for_label(col) if col.kind_of?(String)
+      row = index(row)
+      col = index(col)
 
       tmp = *adjacency_matrix
       tmp[row][col] = value.to_f
       tmp[col][row] = value.to_f if undirected?
-      @adjacency_matrix = Matrix[*tmp]
+
+      self.adjacency_matrix = Matrix[*tmp]
+
       value
     end
 
     def [](row, col)
-      row = determine_index_for_label(row) if row.kind_of?(String)
-      col = determine_index_for_label(col) if col.kind_of?(String)
-
-      @adjacency_matrix[row, col]
+      adjacency_matrix[index(row), index(col)]
     end
 
     def label(vertex_id, label = nil)
-      label ? @labels[vertex_id] = label : @labels[vertex_id]
+      label ? labels[vertex_id] = label : labels[vertex_id]
     end
 
     def edge?(row, column)
-      @adjacency_matrix[row, column] != 0.0
+      adjacency_matrix[index(row), index(column)] != 0.0
     end
 
     def outdegree(vertex)
-      vertex = determine_index_for_label(vertex) if vertex.kind_of?(String)
       0.upto(vertices_count - 1).inject(0) { |sum, index| edge?(vertex, index) ? sum += 1 : sum }
     end
 
     def indegree(vertex)
-      vertex = determine_index_for_label(vertex) if vertex.kind_of?(String)
       0.upto(vertices_count - 1).inject(0) { |sum, index| edge?(index, vertex) ? sum += 1 : sum }
     end
 
@@ -64,11 +64,11 @@ module KeywordExtractor
     end
 
     def vertices_count
-      @adjacency_matrix.row_size
+      adjacency_matrix.row_size
     end
 
     def edges_count
-      @adjacency_matrix.inject(0) { |sum, e| e != 0 ? sum += 1 : sum }
+      adjacency_matrix.inject(0) { |sum, e| e != 0 ? sum += 1 : sum }
     end
 
     def directed?
@@ -97,11 +97,18 @@ module KeywordExtractor
       lmi_graph
     end
 
+    protected
+
+      attr_accessor :labels
+      attr_writer :adjacency_matrix
+
     private
 
-      def determine_index_for_label(given_label)
-        @labels.each do |index, label|
-          return index if label == given_label
+      def index(label_or_numeric)
+        return label_or_numeric.to_int if label_or_numeric.respond_to?(:to_int)
+
+        labels.each do |index, label|
+          return index if label == label_or_numeric
         end
 
         nil
