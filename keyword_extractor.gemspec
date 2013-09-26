@@ -17,7 +17,8 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency "opennlp"
-  s.add_dependency "composable_operations", "~> 1.0"
+  s.add_dependency "composable_operations", "~> 0.4"
 
-  s.add_development_dependency "rspec"
+  s.add_development_dependency "rspec", '~> 2.13'
+  s.add_development_dependency "guard-rspec"
 end
